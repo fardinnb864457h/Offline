@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAGOBD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+  <script src="https://mdfardin857875557.github.io/nice-JS-PLAY/playerjs.js"></script>  <!-- Add Player.js -->
+  <style>
+    .player-container { display: none; }
+    .search-bar { display: none; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  <!-- Header -->
+  <div class="flex items-center justify-between p-4 bg-gray-800">
+    <i class="fas fa-arrow-left text-xl back-btn hidden cursor-pointer" onclick="goBack()"></i>
+    <h1 class="text-xl font-bold title">JADOO</h1>
+    <div class="flex items-center gap-3">
+      <i class="fas fa-search text-xl cursor-pointer" onclick="toggleSearch()"></i>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="p-4 search-bar">
+    <input type="text" id="searchInput" placeholder="Search channels..." oninput="filterChannels()" class="w-full p-2 rounded bg-gray-800 text-white border border-gray-600" />
+  </div>
+
+  <!-- ভিডিও প্লেয়ার অংশ -->
+  <div id="playerPage" class="player-container">
+    <div id="videoPlayer" class="w-full h-[220px] bg-black"></div>  <!-- Video Player JS -->
+    <h2 id="videoTitle" class="text-xl font-semibold mt-2 p-4"></h2>
+  </div>
+
+  <!-- Channel Grid -->
+  <div id="channelGrid" class="p-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+    <!-- Example channel item -->
+  </div>
+
+  <script>
+    const channels = [
+      { name: "T Sports", thumb: "https://edge01.iptv.digijadoo.net/static/t_sports.png", src: "https://www.youtube.com/embed/i-mWMkYmaxs?si" },
+      { name: "Gazi TV", thumb: "https://edge01.iptv.digijadoo.net/static/gazi_tv.png", src: "https://dj-jadutv-by-xfireflix.netlify.app/.netlify/functions/jadoo/gazi_tv_hd.m3u8" },
+      // ... More channels here ...
+    ];
+
+    const channelGrid = document.getElementById('channelGrid');
+    const playerPage = document.getElementById('playerPage');
+    const videoTitle = document.getElementById('videoTitle');
+    const backBtns = document.querySelectorAll('.back-btn');
+    const title = document.querySelector('.title');
+
+    function renderChannels(list) {
+      channelGrid.innerHTML = '';
+      list.forEach(channel => {
+        const div = document.createElement('div');
+        div.className = 'flex flex-col items-center cursor-pointer';
+        div.innerHTML = `
+          <img src="${channel.thumb}" alt="${channel.name}" class="rounded-full border-2 border-green-500" />
+          <p class="mt-2 text-center">${channel.name}</p>
+        `;
+        div.onclick = () => playChannel(channel);
+        channelGrid.appendChild(div);
+      });
+    }
+
+    function playChannel(channel) {
+      const player = new Playerjs({
+        id: "videoPlayer",
+        file: channel.src,
+        poster: channel.thumb,
+        autoplay: true,
+        width: "100%",
+        height: "220px"
+      });
+
+      videoTitle.textContent = channel.name;
+      channelGrid.style.display = 'none';
+      playerPage.style.display = 'block';
+      backBtns.forEach(btn => btn.classList.remove('hidden'));
+      title.textContent = channel.name;
+    }
+
+    function goBack() {
+      playerPage.style.display = 'none';
+      channelGrid.style.display = 'grid';
+      backBtns.forEach(btn => btn.classList.add('hidden'));
+      title.textContent = "JAGOBD";
+    }
+
+    function toggleSearch() {
+      const searchBar = document.querySelector('.search-bar');
+      searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function filterChannels() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = channels.filter(c => c.name.toLowerCase().includes(query));
+      renderChannels(filtered);
+    }
+
+    renderChannels(channels);
+  </script>
+</body>
+</html>
