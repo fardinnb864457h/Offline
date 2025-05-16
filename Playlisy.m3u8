@@ -1,0 +1,4 @@
+ffmpeg -i "rtmp://live.restream.io/live/re_9600057_9ae4ba6c091e5e85eaa8" \
+    -c:v libx264 -c:a aac -f hls \
+    -hls_time 4 -hls_list_size 5 -hls_flags delete_segments \
+    /var/www/html/stream/playlist.m3u8
